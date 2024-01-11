@@ -55,19 +55,32 @@ function showLetter() {
     }
   });
 }
+let guessed = [];
+let i = 0;
 function enterElement() {
-  let i = 0;
-  let guessed = [];
+  while (guessed.length > 0) {
+    guessed.pop();
+  }
+  i=0;
   $('.row-' + [attempt] + ' > div').each(function (index, element) {
-    guessed.push($(element).text())
-  });
-  for(let g of guessed){
-    if(g === wotd[i]){
-      console.log('correct');
+    let checked = check($(element).text());
+    if(checked === 0){
+    $(this).css('background-color', 'green');
+    } else if(checked === 1){
+      $(this).css('background-color', 'yellow');
     } else {
-      console.log('wrong')
+      $(this).css('background-color', 'red');
+
     }
     i++;
-  }
+  });
 }
+function check(letter) {
+    if (letter === wotd[i]) {
+      return 0;
+    } else 
+    if(wotd.includes(letter)){
+      return 1;
+    }
+  }
 
