@@ -1,5 +1,8 @@
 let attempt = 0;
 let guessedLetter = [];
+var greenColor = 'rgb(111,218,99)';
+var grayColor = 'rgb(145,145,145)';
+var yellowColor = 'rgb(251,255,91)';
 //gets the word of the day
 getWotd();
 let wotd = []
@@ -59,16 +62,16 @@ function enterElement() {
   $('.row-' + [attempt] + ' > div').each(function (index, element) {
     let checked = check($(element).text());
     if (checked === 0) {
-      $(this).css('background-color', 'green');
+      $(this).css('background-color', greenColor);
       greenOutKeyBoard($(element).text())
 
     }
     else if (checked === 1) {
-      $(this).css('background-color', 'yellow');
+      $(this).css('background-color', yellowColor);
       yellowOutKeyBoard($(element).text())
     }
     else {
-      $(this).css('background-color', 'red');
+      $(this).css('background-color', grayColor);
       greyOutKeyboard($(element).text());
     }
     i++;
