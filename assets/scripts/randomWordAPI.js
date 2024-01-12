@@ -1,3 +1,4 @@
+//api for checking letter
 function getApi() {
   var requestUrl = 'https://random-word-api.vercel.app/api?words=1&length=5';
 

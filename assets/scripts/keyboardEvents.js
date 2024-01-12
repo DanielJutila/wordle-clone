@@ -6,6 +6,9 @@ getWotd();
 let wotd = []
 function getWotd() {
   getApi().then(function (result) {
+    if(/[^a-zA-Z]/.test(result)){
+      location.reload();
+    }
     wotd = result.toUpperCase().split('');
   })
 }
@@ -38,8 +41,6 @@ $(document).on('keydown', function (event) {
   if (!/[^a-zA-Z]/.test(key)) {
     if (guessedLetter.length < 5) {
       guessedLetter.push(key);
-      console.log(wotd);
-      console.log(guessedLetter);
     }
   }
   showLetter();
@@ -61,12 +62,12 @@ function enterElement() {
   while (guessed.length > 0) {
     guessed.pop();
   }
-  i=0;
+  i = 0;
   $('.row-' + [attempt] + ' > div').each(function (index, element) {
     let checked = check($(element).text());
-    if(checked === 0){
-    $(this).css('background-color', 'green');
-    } else if(checked === 1){
+    if (checked === 0) {
+      $(this).css('background-color', 'green');
+    } else if (checked === 1) {
       $(this).css('background-color', 'yellow');
     } else {
       $(this).css('background-color', 'red');
@@ -76,11 +77,13 @@ function enterElement() {
   });
 }
 function check(letter) {
-    if (letter === wotd[i]) {
-      return 0;
-    } else 
-    if(wotd.includes(letter)){
+  //your code to be executed after 1 second
+  greyOutKeyboard(letter);
+  if (letter === wotd[i]) {
+    return 0;
+  } else
+    if (wotd.includes(letter)) {
       return 1;
     }
-  }
+}
 
