@@ -1,12 +1,11 @@
 let attempt = 0;
 let guessedLetter = [];
-
 //gets the word of the day
 getWotd();
 let wotd = []
 function getWotd() {
   getApi().then(function (result) {
-    if(/[^a-zA-Z]/.test(result)){
+    if (/[^a-zA-Z]/.test(result)) {
       location.reload();
     }
     wotd = result.toUpperCase().split('');
@@ -18,12 +17,7 @@ $(document).on("keydown", function (event) {
   if (event.which === 13) {
     //checks to make sure length is 5
     if (guessedLetter.length === 5) {
-      enterElement();
-      //clears array if both requirments pass
-      while (guessedLetter.length > 0) {
-        guessedLetter.pop();
-      }
-      attempt++;
+      validateWordAndEnter();
     }
   }
 });
@@ -48,42 +42,78 @@ $(document).on('keydown', function (event) {
 
 //shows letters on screen
 function showLetter() {
+  console.log(wotd);
   $('.row-' + [attempt] + ' > div').each(function (index, element) {
     if (index < guessedLetter.length) {
       $(element).text(guessedLetter[index]);
-    } else {
+    }
+    else {
       $(element).text('');
     }
   });
 }
-let guessed = [];
+
 let i = 0;
 function enterElement() {
-  while (guessed.length > 0) {
-    guessed.pop();
-  }
   i = 0;
   $('.row-' + [attempt] + ' > div').each(function (index, element) {
     let checked = check($(element).text());
     if (checked === 0) {
       $(this).css('background-color', 'green');
-    } else if (checked === 1) {
-      $(this).css('background-color', 'yellow');
-    } else {
-      $(this).css('background-color', 'red');
+      greenOutKeyBoard($(element).text())
 
+    }
+    else if (checked === 1) {
+      $(this).css('background-color', 'yellow');
+      yellowOutKeyBoard($(element).text())
+    }
+    else {
+      $(this).css('background-color', 'red');
+      greyOutKeyboard($(element).text());
     }
     i++;
   });
+  while (guessedLetter.length > 0) {
+    guessedLetter.pop();
+  }
+  attempt++;
 }
 function check(letter) {
   //your code to be executed after 1 second
-  greyOutKeyboard(letter);
   if (letter === wotd[i]) {
     return 0;
-  } else
-    if (wotd.includes(letter)) {
-      return 1;
-    }
+  } else if (wotd.includes(letter)) {
+    return 1;
+  }
 }
 
+async function validateWordAndEnter() {
+  const word = guessedLetter.join('');
+  try {
+    const isWordValid = await validateWordAPI(word);
+    if (isWordValid) {
+      enterElement();
+    } else {
+      console.log('Word not valid');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+function validateWordAPI(word) {
+  return fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word)
+    .then(response => {
+      if (response.ok) {
+        return true; // Word found
+      } else if (response.status === 404) {
+        return false; // Word not found
+      } else {
+        throw new Error('Unexpected response status: ' + response.status);
+      }
+    })
+    .catch(error => {
+      console.error('API error:', error);
+      throw error;
+    });
+}
