@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wordle Clone</title>
     <link rel="stylesheet" href="./assets/style/style.css">
+
 </head>
 
 <body>
@@ -54,15 +55,17 @@
     <footer>
         <script>
             var buttons = document.querySelectorAll('.keyboard-button');
-            buttons.forEach(function(button) {
-              var letter = button.innerText.toLowerCase();
-              button.setAttribute('data-key', letter.toUpperCase());
+            buttons.forEach(function (button) {
+                var letter = button.innerText.toLowerCase();
+         
+                button.setAttribute('data-key', letter.toUpperCase());
             });
-          </script>
+        </script>
+
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="./assets/scripts/randomWordAPI.js"></script>
         <script src="./assets/scripts/generateBoard.js"></script>
-        <script src="./assets/scripts/keyboardEvents.js"></script>
+        <script src="./assets/scripts/gameLogic.js"></script>
         <script src="./assets/scripts/keyboardHistory.js"></script>
     </footer>
 </body>
