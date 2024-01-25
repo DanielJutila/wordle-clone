@@ -12,15 +12,9 @@ function getWotd() {
   })
 }
 
-//Checks to see if you pressed enter
-$(document).on("keydown", function (event) {
-  if (event.keyCode === 13) {
-    //checks to make sure length is 5
-    if (guessedLetter.length === 5) {
-      validateWordAndEnter();
-    }
-  }
-});
+$('.pa-button').on('click', function(){
+  location.reload();
+})
 
 //Lets the user press the keys on the bottom of the screen to write
 $('.keyboard-button').on('click', function () {
@@ -32,7 +26,7 @@ $('.keyboard-button').on('click', function () {
   } else if (pressedKey.toLowerCase() === 'del') {
     keyCode = 8;
   } else {
-    keyCode = pressedKey.charCodeAt(0); 
+    keyCode = pressedKey.charCodeAt(0);
   }
   var event = $.Event('keydown');
   event.keyCode = keyCode;
@@ -40,6 +34,13 @@ $('.keyboard-button').on('click', function () {
 });
 
 $(document).on('keydown', function (event) {
+
+  if (event.keyCode === 13) {
+    if (guessedLetter.length === 5) {
+      validateWordAndEnter();
+      console.log(wotd);
+    }
+  }
   //checks to see if only the letters were pressed
   //This was added so that function keys would still work.
   if (event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode === 8) {
@@ -71,12 +72,12 @@ function showLetter() {
     }
   });
 }
+
+
 let i = 0;
-
-
+let correct = 0;
 function processLetters() {
-  
-  i=0
+  i = 0
   function processNextLetter() {
     if (i < $('.row-' + attempt + ' > div').length) {
       let element = $('.row-' + attempt + ' > div').eq(i);
@@ -100,17 +101,38 @@ function processLetters() {
         guessedLetter.pop();
       }
       attempt++;
+      correct = 0;
     }
-    
+
+    if(correct === 5 || attempt === 6){
+      checkWin();
+    }
   }
 
-  processNextLetter(); // Start processing letters
+  processNextLetter();
+
+  function check(letter) {
+    if (letter === wotd[i]) {
+      correct++;
+      return 0;
+    } else if (wotd.includes(letter)) {
+      return 1;
+    }
+  }
 }
-function check(letter) {
-  if (letter === wotd[i]) {
-    return 0;
-  } else if (wotd.includes(letter)) {
-    return 1;
+
+function checkWin(){
+  if(correct === 5){
+    $('.word-display').text('You won! nice');
+    hideKeyboard();
+  }
+  if(correct < 5 && attempt === 6){
+    $('.word-display').text("You lose. The word was '" + wotd.join('') + "'");
+    hideKeyboard();
+  }
+  function hideKeyboard(){
+    $('#keyboard-cont').css('display', 'none');
+    $('.play-again').css('visibility', 'visible');
   }
 }
 
@@ -121,7 +143,7 @@ async function validateWordAndEnter() {
     if (isWordValid) {
       processLetters();
     } else {
-      //Invalid word will shake the row that it is on
+      //this is added to shake the row if the word is invalid.
       $('.row-' + attempt).addClass('shake')
       setTimeout(function () {
         $('.row-' + attempt).removeClass('shake');
@@ -131,7 +153,6 @@ async function validateWordAndEnter() {
     console.error('Error:', error);
   }
 }
-
 
 //checks if the word you entered is a valid word,
 //Want to move this to the API page in the future
